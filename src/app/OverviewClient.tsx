@@ -20,6 +20,8 @@ export default function OverviewPage() {
   const [brief, setBrief] = useState<Brief>(mockBrief);
   const [scanning, setScanning] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const [isLive, setIsLive] = useState(false);
+  const [apiErrors, setApiErrors] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("/api/brief")
@@ -27,21 +29,26 @@ export default function OverviewPage() {
       .then((data) => {
         setBrief(data);
         setIsDemo(!!data._demo);
+        setIsLive(!!data._live);
+        setApiErrors(data._errors || []);
       })
       .catch(() => {});
   }, []);
 
   const handleScan = async () => {
     setScanning(true);
-    await fetch("/api/scan", { method: "POST" });
-    // Refetch brief (live data comes from API directly)
-    const r = await fetch("/api/brief");
-    const data = await r.json();
-    setBrief(data);
-    setIsDemo(!!data._demo);
-    setScanning(false);
+    try {
+      await fetch("/api/scan", { method: "POST" });
+      const r = await fetch("/api/brief");
+      const data = await r.json();
+      setBrief(data);
+      setIsDemo(!!data._demo);
+      setIsLive(!!data._live);
+      setApiErrors(data._errors || []);
+    } finally {
+      setScanning(false);
+    }
   };
-
   return (
     <div className="space-y-6 max-w-[1200px]">
       {/* Demo banner */}
@@ -76,10 +83,19 @@ export default function OverviewPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold">Alpha Brief</h2>
+          <h2 className="text-xl font-bold">Alpha Brief{isLive && <span className="ml-2 inline-flex items-center"><span className="w-2 h-2 rounded-full bg-[#00ff88] pulse-dot mr-1" /><span className="text-xs text-[#00ff88] font-normal">LIVE</span></span>}</h2>
           <p className="text-xs text-[#666] mt-1">
-            {isDemo ? "Sample data" : `Live data — Last updated: ${new Date(brief.generatedAt).toLocaleString()}`}
+            {isLive
+              ? `LIVE — ${new Date(brief.generatedAt).toLocaleString()}`
+              : isDemo
+              ? "Sample data (no API key)"
+              : `Last updated: ${new Date(brief.generatedAt).toLocaleString()}`}
           </p>
+          {apiErrors.length > 0 && (
+            <p className="text-[10px] text-[#ff8800] mt-0.5">
+              Partial data: {apiErrors.join("; ")}
+            </p>
+          )}
         </div>
         {!isDemo && (
           <button
