@@ -1,27 +1,28 @@
 {
-  "name": "sentinel",
-  "version": "1.0.0",
-  "description": "SENTINEL — Smart Money Narrative Oracle. Autonomous multi-chain alpha pipeline using Nansen CLI.",
-  "main": "src/index.js",
-  "type": "module",
-  "bin": {
-    "sentinel": "src/index.js"
-  },
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node src/index.js",
-    "scan": "node src/index.js scan",
-    "brief": "node src/index.js brief",
-    "daemon": "node src/index.js daemon",
-    "test": "node --test src/test.test.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
-  "keywords": ["nansen", "smart-money", "crypto", "alpha", "pipeline", "oracle"],
-  "author": "0x0dabid",
-  "license": "MIT",
   "dependencies": {
-    "chalk": "^5.3.0",
-    "cli-table3": "^0.6.5",
-    "dotenv": "^16.4.5",
-    "node-cron": "^3.0.3",
-    "ora": "^8.0.1"
+    "lucide-react": "^1.7.0",
+    "next": "16.2.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

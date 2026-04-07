@@ -5,7 +5,7 @@ import { mockBrief } from "@/lib/mock";
 
 export async function GET() {
   // Try to read the latest brief from the output directory
-  const outputDir = join(process.cwd(), "..", "output");
+  const outputDir = join(process.cwd(), "pipeline", "output");
 
   try {
     if (existsSync(outputDir)) {

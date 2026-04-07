@@ -30,19 +30,59 @@ SENTINEL runs a 5-layer analysis pipeline:
 npm install -g nansen-cli
 
 # 2. Clone and setup
+git clone https://github.com/0x0dabid/sentinel.git
 cd sentinel
+
+# 3. Install dashboard dependencies
 npm install
 
-# 3. Configure
+# 4. Configure
 cp .env.example .env
 # Edit .env and add your NANSEN_API_KEY
 
-# 4. Run
-node src/index.js          # Full pipeline
-node src/index.js scan     # Quick scan only
-node src/index.js daemon   # Run as daemon (every 30 min)
-node src/index.js status   # Show config
+# 5. Run the pipeline
+node pipeline/src/index.js          # Full pipeline
+node pipeline/src/index.js scan     # Quick scan only
+node pipeline/src/index.js daemon   # Run as daemon (every 30 min)
+node pipeline/src/index.js status   # Show config
+
+# 6. Run the dashboard
+npm run dev                         # Development
+npm run build && npm start          # Production
 ```
+
+## Project Structure
+
+```
+sentinel/
+├── src/                    # Next.js dashboard (App Router)
+│   ├── app/               # Pages: /, /signals, /coordination, /perps, /risks
+│   ├── components/        # UI components
+│   └── lib/               # Types, mock data
+├── pipeline/              # Nansen CLI alpha pipeline
+│   └── src/
+│       ├── index.js       # CLI entry point
+│       ├── scanner.js     # Layer 1: Multi-chain SM scanner
+│       ├── clusterer.js   # Layer 2: Wallet clustering
+│       ├── crossChain.js  # Layer 3: Cross-chain correlation
+│       ├── deepDive.js    # Layer 4: AI deep dive
+│       ├── alphaBrief.js  # Layer 5: Brief generator
+│       ├── orchestrator.js# Pipeline coordinator
+│       ├── scheduler.js   # Cron daemon
+│       └── delivery.js    # Output delivery
+├── public/                # Static assets
+└── README.md
+```
+
+## Dashboard
+
+Built with **Next.js 16 + Tailwind CSS**. Dark theme with neon lime (#C8FF00) accent.
+
+- **Overview** — Alpha score, narrative prediction, top signals at a glance
+- **Signals** — Filterable signal explorer with conviction scores and AI insights
+- **Coordination** — Wallet cluster visualization and coordination scoring
+- **Perps** — Perp market overview, hot markets, SM positioning
+- **Risks** — Risk monitor with severity levels and factor breakdown
 
 ## Configuration
 
@@ -55,61 +95,6 @@ node src/index.js status   # Show config
 | `WEBHOOK_URL` | — | Optional webhook for delivery |
 | `TELEGRAM_BOT_TOKEN` | — | Optional Telegram bot token |
 | `TELEGRAM_CHAT_ID` | — | Optional Telegram chat ID |
-
-## Output
-
-Each run generates an Alpha Brief:
-
-```
-═══════════════════════════════════════════════════
-  SENTINEL ALPHA BRIEF
-  2026-04-07T20:30:00.000Z
-═══════════════════════════════════════════════════
-
-  ALPHA SCORE: 72/100
-
-  NARRATIVE: Coordinated Multi-Chain Accumulation
-  Confidence: 80%
-    - 3 tokens being accumulated across multiple chains
-    - Top targets: TOKEN_A, TOKEN_B, TOKEN_C
-    - Funds active in: TOKEN_A, TOKEN_B
-
-  TOP SIGNALS:
-  ─────────────────────────────────────────────────
-  [45] TOKEN_A
-    Pattern: multi_chain_accumulation
-    Chains: ethereum, solana, base
-    Net Flow: $2.5M
-    Funds: 3 active
-    Exit Risk: LOW
-    Buy Pressure: 0.82
-    AI Insight: Smart money appears to be positioning for...
-
-  COORDINATION:
-    Score: 65/100
-    - 5 SM wallets trading TOKEN_A
-    - Cluster of 6 related wallets around 0x1234...
-
-  RISK ALERTS:
-    [MEDIUM] TOKEN_C: Slight SM outflow: -$150K
-═══════════════════════════════════════════════════
-```
-
-## Architecture
-
-```
-src/
-├── index.js          CLI entry point
-├── config.js         Config, nansen CLI wrapper, utils
-├── scanner.js        Layer 1: Multi-chain SM scanner
-├── clusterer.js      Layer 2: Wallet clustering
-├── crossChain.js     Layer 3: Cross-chain correlation
-├── deepDive.js       Layer 4: AI deep dive
-├── alphaBrief.js     Layer 5: Brief generator
-├── orchestrator.js   Pipeline coordinator
-├── scheduler.js      Cron daemon
-└── delivery.js       Output delivery (console/webhook/Telegram)
-```
 
 ## Credit Usage
 
